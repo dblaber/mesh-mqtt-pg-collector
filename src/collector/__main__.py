@@ -16,16 +16,20 @@ from .mqtt_handler import run
 
 
 def main() -> None:
-    config = load_config()
-
-    # Configure logging
+    # Configure logging early so config-load messages are visible
     logging.basicConfig(
-        level=getattr(logging, config.log_level.upper(), logging.INFO),
+        level=logging.INFO,
         format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
         stream=sys.stdout,
     )
     logger = logging.getLogger("collector")
+
+    config = load_config()
+
+    # Adjust log level from config
+    log_level = getattr(logging, config.log_level.upper(), logging.INFO)
+    logging.getLogger().setLevel(log_level)
 
     logger.info("mesh-mqtt-pg-collector starting up")
     logger.info(
