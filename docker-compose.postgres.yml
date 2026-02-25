@@ -1,0 +1,36 @@
+# Optional: include this file to run a local PostgreSQL instance.
+#
+# Usage:
+#   docker compose -f docker-compose.yml -f docker-compose.postgres.yml up -d
+
+services:
+  collector:
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      COLLECTOR_POSTGRES_HOST: postgres
+      COLLECTOR_POSTGRES_PORT: "5432"
+      COLLECTOR_POSTGRES_USER: meshtastic
+      COLLECTOR_POSTGRES_PASSWORD: meshtastic
+      COLLECTOR_POSTGRES_DBNAME: meshtastic
+
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: meshtastic
+      POSTGRES_PASSWORD: meshtastic
+      POSTGRES_DB: meshtastic
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U meshtastic"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:

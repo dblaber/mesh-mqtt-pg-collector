@@ -1,0 +1,9 @@
+services:
+  collector:
+    build: .
+    restart: unless-stopped
+    env_file:
+      - path: .env
+        required: false
+    volumes:
+      - ./config.yaml:/app/config.yaml:ro

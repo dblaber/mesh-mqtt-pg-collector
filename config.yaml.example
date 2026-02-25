@@ -1,0 +1,42 @@
+# mesh-mqtt-pg-collector configuration
+#
+# Copy this file to config.yaml and adjust values as needed.
+# All settings can also be overridden via environment variables
+# prefixed with COLLECTOR_ (see below for the mapping).
+
+# --- MQTT broker ---
+mqtt:
+  broker_address: "127.0.0.1"        # COLLECTOR_MQTT_BROKER
+  port: 1883                          # COLLECTOR_MQTT_PORT
+  username: null                      # COLLECTOR_MQTT_USERNAME
+  password: null                      # COLLECTOR_MQTT_PASSWORD
+  topic_prefix: "msh"                 # COLLECTOR_MQTT_TOPIC_PREFIX
+  topic_suffix: "/+/+/+/#"            # COLLECTOR_MQTT_TOPIC_SUFFIX
+  client_id: "mesh-mqtt-pg-collector" # COLLECTOR_MQTT_CLIENT_ID
+
+# --- PostgreSQL ---
+postgres:
+  host: "localhost"                   # COLLECTOR_POSTGRES_HOST
+  port: 5432                          # COLLECTOR_POSTGRES_PORT
+  user: "meshtastic"                  # COLLECTOR_POSTGRES_USER
+  password: "meshtastic"              # COLLECTOR_POSTGRES_PASSWORD
+  dbname: "meshtastic"                # COLLECTOR_POSTGRES_DBNAME
+
+# --- Encryption ---
+
+# Default Meshtastic LongFast channel key (well-known public key).
+# Override with COLLECTOR_DEFAULT_KEY env var.
+default_key: "1PG7OiApB1nwvP+rz05pAQ=="
+
+# Per-channel encryption keys.
+# Each entry maps a channel name to a base64-encoded key.
+# The collector will try the default key first, then each channel key
+# until decryption succeeds.
+channel_keys: []
+  # - name: "Wx"
+  #   key: "your_base64_encoded_key_here=="
+  # - name: "MyPrivateChannel"
+  #   key: "another_base64_key=="
+
+# --- Logging ---
+log_level: "INFO"                     # COLLECTOR_LOG_LEVEL

@@ -1,0 +1,58 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "mesh-mqtt-pg-collector"
+version = "0.1.0"
+description = "A lightweight Meshtastic MQTT to PostgreSQL collector. Listens to MQTT, decrypts mesh packets, and stores packet history and node info directly into PostgreSQL."
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "mesh-mqtt-pg-collector Contributors" }]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: End Users/Desktop",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Communications :: Ham Radio",
+    "Topic :: System :: Networking :: Monitoring",
+]
+requires-python = ">=3.12"
+dependencies = [
+    "paho-mqtt>=2.1.0",
+    "meshtastic>=2.6.0",
+    "cryptography>=45.0.3",
+    "psycopg2-binary>=2.9.9",
+    "pyyaml>=6.0",
+]
+
+[project.urls]
+Repository = "https://github.com/mesh-mqtt-pg-collector/mesh-mqtt-pg-collector"
+Issues = "https://github.com/mesh-mqtt-pg-collector/mesh-mqtt-pg-collector/issues"
+
+[project.scripts]
+mesh-mqtt-pg-collector = "collector.__main__:main"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3.0",
+    "ruff>=0.11.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/collector"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "B", "C4", "UP"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
