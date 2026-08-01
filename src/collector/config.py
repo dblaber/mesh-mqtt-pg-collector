@@ -23,6 +23,11 @@ class MqttConfig:
     topic_prefix: str = "msh"
     topic_suffix: str = "/+/+/+/#"
     client_id: str = "mesh-mqtt-pg-collector"
+    tls_enabled: bool = False
+    tls_ca_certs: str | None = None
+    tls_certfile: str | None = None
+    tls_keyfile: str | None = None
+    tls_insecure: bool = False  # skip hostname verification (for self-signed certs)
 
 
 @dataclass(slots=True)
@@ -70,6 +75,11 @@ def _apply_env_overrides(config: AppConfig) -> None:
         "COLLECTOR_MQTT_TOPIC_PREFIX": ("mqtt", "topic_prefix"),
         "COLLECTOR_MQTT_TOPIC_SUFFIX": ("mqtt", "topic_suffix"),
         "COLLECTOR_MQTT_CLIENT_ID": ("mqtt", "client_id"),
+        "COLLECTOR_MQTT_TLS_ENABLED": ("mqtt", "tls_enabled"),
+        "COLLECTOR_MQTT_TLS_CA_CERTS": ("mqtt", "tls_ca_certs"),
+        "COLLECTOR_MQTT_TLS_CERTFILE": ("mqtt", "tls_certfile"),
+        "COLLECTOR_MQTT_TLS_KEYFILE": ("mqtt", "tls_keyfile"),
+        "COLLECTOR_MQTT_TLS_INSECURE": ("mqtt", "tls_insecure"),
         "COLLECTOR_POSTGRES_HOST": ("postgres", "host"),
         "COLLECTOR_POSTGRES_PORT": ("postgres", "port"),
         "COLLECTOR_POSTGRES_USER": ("postgres", "user"),

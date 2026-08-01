@@ -334,6 +334,19 @@ def run(config: AppConfig) -> None:
     if config.mqtt.username:
         client.username_pw_set(config.mqtt.username, config.mqtt.password)
 
+    if config.mqtt.tls_enabled:
+        tls_kwargs = {"ca_certs": config.mqtt.tls_ca_certs}
+        if config.mqtt.tls_certfile and config.mqtt.tls_keyfile:
+            tls_kwargs["certfile"] = config.mqtt.tls_certfile
+            tls_kwargs["keyfile"] = config.mqtt.tls_keyfile
+
+        client.tls_set(**tls_kwargs)
+
+        if config.mqtt.tls_insecure:
+            client.tls_insecure_set(True)
+
+        logger.info("TLS/SSL enabled for MQTT connection")
+
     client.on_connect = _on_connect
     client.on_disconnect = _on_disconnect
     client.on_message = _on_message(config)

@@ -14,6 +14,13 @@ mqtt:
   topic_suffix: "/+/+/+/#"            # COLLECTOR_MQTT_TOPIC_SUFFIX
   client_id: "mesh-mqtt-pg-collector" # COLLECTOR_MQTT_CLIENT_ID
 
+  # TLS settings (required when connecting to Mosquitto on port 8883)
+  tls_enabled: false                  # COLLECTOR_MQTT_TLS_ENABLED
+  tls_ca_certs: null                  # COLLECTOR_MQTT_TLS_CA_CERTS
+  tls_certfile: null                  # COLLECTOR_MQTT_TLS_CERTFILE
+  tls_keyfile: null                   # COLLECTOR_MQTT_TLS_KEYFILE
+  tls_insecure: false                 # COLLECTOR_MQTT_TLS_INSECURE (skip hostname check for self-signed)
+
 # --- PostgreSQL ---
 postgres:
   host: "localhost"                   # COLLECTOR_POSTGRES_HOST

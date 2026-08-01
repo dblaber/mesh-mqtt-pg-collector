@@ -38,6 +38,65 @@ docker compose up -d
 docker compose -f docker-compose.yml -f docker-compose.postgres.yml up -d
 ```
 
+### With a bundled Mosquitto broker
+
+```bash
+# Generate TLS certificates first
+./scripts/generate-certs.sh mqtt.local 365
+
+# Set a password for the Mosquitto admin user
+docker exec -it mosquitto mosquitto_passwd -b /mosquitto/config/pwfile admin yourpassword
+
+# Copy the CA cert into the app for TLS verification
+cp mosquitto/config/ca.crt .
+
+# Collector + Mosquitto
+docker compose -f docker-compose.yml -f docker-compose.mosquitto.yml up -d
+```
+
+Then configure the collector to connect via TLS. Either in `config.yaml`:
+
+```yaml
+mqtt:
+  broker_address: "mosquitto"
+  port: 8883
+  username: "admin"
+  password: "yourpassword"
+  tls_enabled: true
+  tls_ca_certs: "/app/ca.crt"
+  tls_insecure: false
+```
+
+Or via `.env`:
+
+```bash
+COLLECTOR_MQTT_BROKER=mosquitto
+COLLECTOR_MQTT_PORT=8883
+COLLECTOR_MQTT_USERNAME=admin
+COLLECTOR_MQTT_PASSWORD=yourpassword
+COLLECTOR_MQTT_TLS_ENABLED=true
+COLLECTOR_MQTT_TLS_CA_CERTS=/app/ca.crt
+COLLECTOR_MQTT_TLS_INSECURE=false
+```
+
+### With Mosquitto + PostgreSQL
+
+```bash
+# Generate TLS certificates first
+./scripts/generate-certs.sh mqtt.local 365
+
+# Set a password for the Mosquitto admin user
+docker exec -it mosquitto mosquitto_passwd -b /mosquitto/config/pwfile admin yourpassword
+
+# Copy the CA cert into the app for TLS verification
+cp mosquitto/config/ca.crt .
+
+# Collector + Mosquitto + PostgreSQL
+docker compose -f docker-compose.yml -f docker-compose.mosquitto.yml -f docker-compose.postgres.yml up -d
+```
+
+Then configure the collector as shown above, pointing at the Mosquitto broker with TLS.
+
 ## Configuration
 
 Configuration is loaded from `config.yaml` (or the path in `COLLECTOR_CONFIG_FILE` env var), with environment variables taking precedence.
@@ -68,6 +127,12 @@ All settings can be overridden via environment variables:
 | `COLLECTOR_MQTT_PASSWORD` | MQTT password | (none) |
 | `COLLECTOR_MQTT_TOPIC_PREFIX` | MQTT topic prefix | `msh` |
 | `COLLECTOR_MQTT_TOPIC_SUFFIX` | MQTT topic suffix | `/+/+/+/#` |
+| `COLLECTOR_MQTT_CLIENT_ID` | MQTT client ID | `mesh-mqtt-pg-collector` |
+| `COLLECTOR_MQTT_TLS_ENABLED` | Enable TLS/SSL | `false` |
+| `COLLECTOR_MQTT_TLS_CA_CERTS` | CA certificate path | (none) |
+| `COLLECTOR_MQTT_TLS_CERTFILE` | Client certificate path | (none) |
+| `COLLECTOR_MQTT_TLS_KEYFILE` | Client key path | (none) |
+| `COLLECTOR_MQTT_TLS_INSECURE` | Skip hostname verification | `false` |
 | `COLLECTOR_POSTGRES_HOST` | PostgreSQL host | `localhost` |
 | `COLLECTOR_POSTGRES_PORT` | PostgreSQL port | `5432` |
 | `COLLECTOR_POSTGRES_USER` | PostgreSQL user | `postgres` |

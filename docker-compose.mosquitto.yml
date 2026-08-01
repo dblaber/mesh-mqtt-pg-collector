@@ -1,0 +1,34 @@
+# Optional: include this file to run a local Mosquitto MQTT broker.
+#
+# Usage:
+#   docker compose -f docker-compose.yml -f docker-compose.mosquitto.yml up -d
+#
+# Prerequisites:
+#   Generate TLS certs and a password file before starting:
+#     ./scripts/generate-certs.sh
+#     docker exec -it mosquitto mosquitto_passwd -b /mosquitto/config/pwfile admin yourpassword
+#     cp mosquitto/config/ca.crt .   (copy CA cert for the collector)
+#
+# The collector will connect on port 8883 with TLS using the generated certs.
+# Set COLLECTOR_MQTT_BROKER=mosquitto and COLLECTOR_MQTT_PORT=8883 in .env or config.yaml.
+
+services:
+  collector:
+    volumes:
+      - ./ca.crt:/app/ca.crt:ro
+
+  mosquitto:
+    image: eclipse-mosquitto:2
+    hostname: mosquitto
+    container_name: mosquitto
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+      - "8883:8883"
+    volumes:
+      - ./mosquitto/config:/mosquitto/config:rw
+      - ./mosquitto/data:/mosquitto/data:rw
+      - ./mosquitto/log:/mosquitto/log:rw
+
+
